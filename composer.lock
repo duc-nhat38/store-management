@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ce78977a0642f1723cdf772f7e118fb",
+    "content-hash": "aa322c53454393ed775cfe4807d54a50",
     "packages": [
         {
             "name": "brick/math",
@@ -1804,77 +1804,6 @@
                 }
             ],
             "time": "2023-08-05T12:09:49+00:00"
-        },
-        {
-            "name": "miladimos/laravel-repository",
-            "version": "0.8.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/miladimos/laravel-repository.git",
-                "reference": "def124d908a437d7399b62fe643455674c646bb3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/miladimos/laravel-repository/zipball/def124d908a437d7399b62fe643455674c646bb3",
-                "reference": "def124d908a437d7399b62fe643455674c646bb3",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.4|^8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Miladimos\\Repository\\Providers\\RepositoryServiceProvider"
-                    ],
-                    "aliases": {
-                        "Repository": "Miladimos\\Repository\\Facades\\RepositoryFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Miladimos\\Repository\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "miladimos",
-                    "email": "miladimos@outlook.com",
-                    "homepage": "https://github.com/miladimos",
-                    "role": "maintaner"
-                }
-            ],
-            "description": "a powerful and simple to use package for repository pattern",
-            "homepage": "https://github.com/miladimos/laravel-repository",
-            "keywords": [
-                "Laravel Support",
-                "design pattern",
-                "laravel",
-                "laravel packages",
-                "laravel-package",
-                "laravel-repository",
-                "lumen packages",
-                "lumen support",
-                "repository",
-                "repository pattern"
-            ],
-            "support": {
-                "issues": "https://github.com/miladimos/laravel-repository/issues",
-                "source": "https://github.com/miladimos/laravel-repository/tree/v0.8.8"
-            },
-            "funding": [
-                {
-                    "url": "https://idpay.ir/laravelir",
-                    "type": "custom"
-                }
-            ],
-            "time": "2023-04-12T10:00:29+00:00"
         },
         {
             "name": "monolog/monolog",
