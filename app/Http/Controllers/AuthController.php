@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\Facades\JsonResponse;
 use App\Http\Requests\LoginRequest;
 use App\RepositoryInterfaces\UserRepositoryInterface;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     /**
-     * @param UserRepositoryInterface $userRepository
+     * @param \App\RepositoryInterfaces\UserRepositoryInterface $userRepository
      */
     public function __construct(
         protected UserRepositoryInterface $userRepository
@@ -40,5 +42,18 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => $user
         ], __('Login successfully.'));
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        if ($request->user()->currentAccessToken()->delete()) {
+            return JsonResponse::success(null, __('Logout successfully.'));
+        }
+
+        return JsonResponse::error(__('Logout failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

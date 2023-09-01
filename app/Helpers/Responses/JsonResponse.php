@@ -26,9 +26,15 @@ class JsonResponse
      * @param string $message
      * @return \Illuminate\Http\JsonResponse
      */
-    public function success($data, string $message)
+    public function success($data = null, string $message)
     {
-        return $this->response(['message' => $message, 'data' => $data], Response::HTTP_OK);
+        $payload = ['message' => $message];
+
+        if (isNotEmptyStringOrNull($data)) {
+            $payload['data'] = $data;
+        }
+
+        return $this->response($payload, Response::HTTP_OK);
     }
 
     /**
