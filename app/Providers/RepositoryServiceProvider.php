@@ -10,7 +10,9 @@ class RepositoryServiceProvider extends ServiceProvider
     /**
     * define your repositories here
     */
-    protected $repositories = [];
+    protected $repositories = [
+        [\App\RepositoryInterfaces\UserRepositoryInterface::class, \App\Repositories\UserRepository::class]
+    ];
 
     /**
      * @return void

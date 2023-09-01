@@ -64,4 +64,5 @@ return [
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
     ],
 
+    'token_prefix' => \Illuminate\Support\Str::of(env('SANCTUM_TOKEN_PREFIX'))->lower()->snake()
 ];
