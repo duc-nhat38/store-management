@@ -26,15 +26,21 @@ class JsonResponse
      * @param string $message
      * @return \Illuminate\Http\JsonResponse
      */
-    public function success($data, string $message)
+    public function success($data = null, string $message)
     {
-        return $this->response(['message' => $message, 'data' => $data], Response::HTTP_OK);
+        $payload = ['message' => $message];
+
+        if (isNotEmptyStringOrNull($data)) {
+            $payload['data'] = $data;
+        }
+
+        return $this->response($payload, Response::HTTP_OK);
     }
 
     /**
      * @param string $message
-     * @param mixed $error
      * @param integer|null $statusCode
+     * @param mixed $error
      * @return \Illuminate\Http\JsonResponse
      */
     public function error(string $message, ?int $statusCode = null, $error = null)
@@ -46,5 +52,15 @@ class JsonResponse
         }
 
         return $this->response($payload, $statusCode ?? Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * @param string|null $message
+     * @param mixed $error
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unauthorized(?string $message = null, $error = null)
+    {
+        return $this->error($message ?? 'Unauthorized.', Response::HTTP_UNAUTHORIZED, $error);
     }
 }

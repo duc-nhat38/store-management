@@ -18,4 +18,11 @@ interface BaseRepositoryInterface
      * @return $this
      */
     public function newQuery();
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function find($value, string $column = 'id');
 }

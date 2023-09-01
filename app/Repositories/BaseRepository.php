@@ -49,4 +49,16 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
         return $this;
     }
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function find($value, string $column = 'id')
+    {
+        $this->newQuery();
+
+        return $this->query->where($column, $value)->first();
+    }
 }
