@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Helpers\Facades\JsonResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
@@ -40,10 +41,12 @@ class ApiRequest extends FormRequest
      */
     protected function failedValidation($validator)
     {
-        if ($this->wantsJson()) {
-            return JsonResponse::error('Data invalid.', Response::HTTP_UNPROCESSABLE_ENTITY, $validator->errors()->messages());
+        if ($this->expectsJson()) {
+            throw new HttpResponseException(
+                JsonResponse::error(__('Invalid data.'), Response::HTTP_UNPROCESSABLE_ENTITY, $validator->errors()->messages())
+            );
         }
 
-        throw new ValidationException($validator);
+        parent::failedValidation($validator);
     }
 }

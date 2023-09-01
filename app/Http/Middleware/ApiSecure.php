@@ -21,7 +21,7 @@ class ApiSecure
             $requestApiKey = $request->header('X-api-key');
 
             if ($requestApiKey !== config('app.api_key')) {
-                return JsonResponse::error('Unauthorized.', HttpResponse::HTTP_UNAUTHORIZED, '');
+                return JsonResponse::unauthorized();
             }
         }
 
