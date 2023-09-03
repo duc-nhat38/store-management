@@ -54,9 +54,42 @@ abstract class BaseRepository implements BaseRepositoryInterface
     /**
      * @return array
      */
-    public function getFillter()
+    public function filter()
     {
         return [];
+    }
+
+    /**
+     * @param array $search
+     * @return $this
+     */
+    public function queryFilter(array $search)
+    {
+        foreach ($this->filter() as $key => $column) {
+            $column = (array) $column;
+            $columnName = $column[0] ?? '';
+            $fieldName = is_numeric($key) ? $columnName : $key;
+
+            $this->query = $this->query
+                ->when(isNotEmptyStringOrNull($search[$fieldName] ?? null), function ($q) use ($search, $column, $fieldName, $columnName) {
+                    if (($column[1] ?? null) === 'like') {
+                        $q->where($columnName, 'like', ($column[2] ?? ''). escapeLike($search[$fieldName]) . ($column[3] ?? ''));
+                    } else {
+                        $q->where($columnName, ($column[1] ?? '='), $search[$fieldName]);
+                    }
+                });
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $search
+     * @return $this
+     */
+    public function whereRelation(array $search)
+    {
+        return $this;
     }
 
     /**
@@ -77,22 +110,13 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function get(Request $request)
     {
-        $this->newQuery();
-
-        $query = $this->query;
-
-        foreach ($this->getFillter() as $key => $column) {
-            $fieldName = is_numeric($key) ? $column : $key;
-
-            $query = $query->when($request->filled($fieldName), function ($q) use ($request, $fieldName, $column) {
-                $q->where($column, 'like', '%' . escapeLike($request->{$fieldName}) . '%');
-            });
-        }
+        $search = $request->all();
+        $this->newQuery()->queryFilter($search)->whereRelation($search);
 
         if ($request->limit) {
-            return $query->paginate($request->limit);
+            return $this->query->paginate($request->limit);
         }
 
-        return $query->get();
+        return $this->query->get();
     }
 }

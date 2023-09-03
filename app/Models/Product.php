@@ -25,6 +25,12 @@ class Product extends Model
         'description'
     ];
 
+    /** @var array */
+    protected $casts = [
+        'price' => 'float',
+    ];
+
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

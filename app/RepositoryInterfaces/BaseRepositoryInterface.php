@@ -22,7 +22,19 @@ interface BaseRepositoryInterface
     /**
      * @return array
      */
-    public function getFillter();
+    public function filter();
+
+    /**
+     * @param array $search
+     * @return $this
+     */
+    public function queryFilter(array $search);
+
+    /**
+     * @param array $search
+     * @return $this
+     */
+    public function whereRelation(array $search);
 
     /**
      * @param mixed $value
