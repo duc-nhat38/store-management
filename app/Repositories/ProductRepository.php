@@ -217,4 +217,26 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             $product->attachMedia($media, $tag);
         }
     }
+
+    /**
+     * @param int|array $id
+     * @return int
+     */
+    public function delete($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $product = $this->findOrFail($id);
+            $product->stores()->detach();
+            $media = $product->media;
+            $product->media()->detach();
+
+            try {
+                $this->fileService->delete($media->pluck('id')->toArray());
+            } catch (\Exception $e) {
+                report($e);
+            }
+
+            return $product->delete();
+        });
+    }
 }

@@ -113,6 +113,6 @@ class FileService
      */
     protected function makeFilename($file)
     {
-        return Str::random(100) . time()  . '.' . $file->getClientOriginalExtension();;
+        return Str::random(100) . time();
     }
 }

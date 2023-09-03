@@ -189,9 +189,8 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         $this->newQuery();
 
-        $model = $this->find($id);
+        $model = $this->findOrFail($id);
 
-        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
         throw_unless($model->update($attributes), \Exception::class, __('Update failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
 
         return $model;
