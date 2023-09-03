@@ -17,8 +17,8 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     /**
      * @return array
      */
-    public function getFillter()
+    public function filter()
     {
-        return ['name'];
+        return [['name', 'like', '%', '%']];
     }
 }

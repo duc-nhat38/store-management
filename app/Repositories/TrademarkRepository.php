@@ -17,8 +17,11 @@ class TrademarkRepository extends BaseRepository implements TrademarkRepositoryI
     /**
      * @return array
      */
-    public function getFillter()
+    public function filter()
     {
-        return ['name', 'nation'];
+        return [
+            ['name', 'like', '%', '%'],
+            ['nation', 'like', '%', '%']
+        ];
     }
 }
