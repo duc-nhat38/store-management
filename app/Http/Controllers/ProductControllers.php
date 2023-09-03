@@ -65,4 +65,15 @@ class ProductControllers extends Controller
 
         return JsonResponse::success(ProductResource::make($product)->resolve(), __('Product detail.'));
     }
+
+    /**
+     * @param int $id
+     * @return \App\Helpers\Facades\JsonResponse
+     */
+    public function destroy($id)
+    {
+        $this->productRepository->delete($id);
+
+        return JsonResponse::success(null, __('Deleted product successfully.'));
+    }
 }
