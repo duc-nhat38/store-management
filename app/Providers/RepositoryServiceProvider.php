@@ -11,7 +11,8 @@ class RepositoryServiceProvider extends ServiceProvider
     * define your repositories here
     */
     protected $repositories = [
-        [\App\RepositoryInterfaces\UserRepositoryInterface::class, \App\Repositories\UserRepository::class]
+        [\App\RepositoryInterfaces\UserRepositoryInterface::class, \App\Repositories\UserRepository::class],
+        [\App\RepositoryInterfaces\CategoryRepositoryInterface::class, \App\Repositories\CategoryRepository::class]
     ];
 
     /**
