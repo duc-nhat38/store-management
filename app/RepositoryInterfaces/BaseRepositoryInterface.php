@@ -91,4 +91,12 @@ interface BaseRepositoryInterface
      * @return \Illuminate\Support\Collection
      */
     public function pluck(string $column, ?string $key = null);
+
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function findOrFail($value, string $column = 'id');
 }
