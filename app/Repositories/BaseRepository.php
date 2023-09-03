@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\RepositoryInterfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
@@ -51,6 +52,14 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
+     * @return array
+     */
+    public function getFillter()
+    {
+        return [];
+    }
+
+    /**
      * @param mixed $value
      * @param string $column
      * @return \Illuminate\Database\Eloquent\Model|mixed
@@ -60,5 +69,30 @@ abstract class BaseRepository implements BaseRepositoryInterface
         $this->newQuery();
 
         return $this->query->where($column, $value)->first();
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
+     */
+    public function get(Request $request)
+    {
+        $this->newQuery();
+
+        $query = $this->query;
+
+        foreach ($this->getFillter() as $key => $column) {
+            $fieldName = is_numeric($key) ? $column : $key;
+
+            $query = $query->when($request->filled($fieldName), function ($q) use ($request, $fieldName, $column) {
+                $q->where($column, 'like', '%' . escapeLike($request->{$fieldName}) . '%');
+            });
+        }
+
+        if ($request->limit) {
+            return $query->paginate($request->limit);
+        }
+
+        return $query->get();
     }
 }
