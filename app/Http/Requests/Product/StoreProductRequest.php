@@ -3,11 +3,11 @@
 namespace App\Http\Requests\Product;
 
 use App\Enums\ProductStatus;
+use App\Http\Requests\ApiRequest;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreProductRequest extends FormRequest
+class StoreProductRequest extends ApiRequest
 {
     /** @var string */
     protected $mediaMimes;
@@ -17,14 +17,6 @@ class StoreProductRequest extends FormRequest
 
     /** @var int */
     protected $maxFileSize;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
     /**
      * Prepare the data for validation.

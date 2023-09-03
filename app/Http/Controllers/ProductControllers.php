@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Facades\JsonResponse;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\RepositoryInterfaces\ProductRepositoryInterface;
@@ -38,8 +39,19 @@ class ProductControllers extends Controller
     public function store(StoreProductRequest $request)
     {
         $product = $this->productRepository->create($request);
-        $product->load('category', 'trademark')->loadMedia();
 
         return JsonResponse::success(ProductResource::make($product)->resolve(), __('Create product successfully.'));
+    }
+
+    /**
+     * @param \App\Http\Requests\Product\UpdateProductRequest $request
+     * @param int $id
+     * @return \App\Helpers\Facades\JsonResponse
+     */
+    public function update(UpdateProductRequest $request, $id)
+    {
+        $product = $this->productRepository->update($request, $id);
+
+        return JsonResponse::success(ProductResource::make($product)->resolve(), __('Update product successfully.'));
     }
 }
