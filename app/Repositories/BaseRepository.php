@@ -84,10 +84,54 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
+     * @return array
+     */
+    public function sort()
+    {
+        return [];
+    }
+
+    /**
+     * @param string $sortType
+     * @return bool
+     */
+    protected function isSortAllowed(string $sortType)
+    {
+        return in_array(strtolower($sortType), ['asc', 'desc']);
+    }
+
+    /**
+     * @param array $sort
+     * @return $this
+     */
+    public function querySort(array $sort)
+    {
+        if (
+            isNotEmptyStringOrNull($sort['sort_column'] ??  null) &&
+            isNotEmptyStringOrNull($sort['sort_type'] ??  null) &&
+            in_array($sort['sort_column'], $this->sort()) &&
+            $this->isSortAllowed($sort['sort_type'] ?? '')
+        ) {
+            $this->query = $this->query->orderBy($sort['sort_column'], strtolower($sort['sort_type']));
+        }
+
+        return $this;
+    }
+
+    /**
      * @param array $search
      * @return $this
      */
     public function whereRelation(array $search)
+    {
+        return $this;
+    }
+
+    /**
+     * @param \Illuminate\Http\Request|null $search
+     * @return $this
+     */
+    public function with($request = null)
     {
         return $this;
     }
@@ -111,7 +155,11 @@ abstract class BaseRepository implements BaseRepositoryInterface
     public function get(Request $request)
     {
         $search = $request->all();
-        $this->newQuery()->queryFilter($search)->whereRelation($search);
+        $this->newQuery()
+            ->queryFilter($search)
+            ->whereRelation($search)
+            ->with($request)
+            ->querySort($search);
 
         if ($request->limit) {
             return $this->query->paginate($request->limit);

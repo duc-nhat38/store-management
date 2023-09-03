@@ -7,6 +7,7 @@ use App\Enums\MediaTag;
 use App\Models\Product;
 use App\RepositoryInterfaces\ProductRepositoryInterface;
 use App\Services\FileService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -64,6 +65,25 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         }
 
         return $this;
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $search
+     * @return $this
+     */
+    public function with($request = null)
+    {
+        $this->query = $this->query->with('category', 'trademark', 'media');
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function sort()
+    {
+        return ['id', 'name', 'price', 'quantity', 'status', 'created_at', 'updated_at'];
     }
 
     /**

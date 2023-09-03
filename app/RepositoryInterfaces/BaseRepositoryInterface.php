@@ -31,10 +31,27 @@ interface BaseRepositoryInterface
     public function queryFilter(array $search);
 
     /**
+     * @return array
+     */
+    public function sort();
+
+    /**
+     * @param array $sort
+     * @return $this
+     */
+    public function querySort(array $sort);
+
+    /**
      * @param array $search
      * @return $this
      */
     public function whereRelation(array $search);
+
+    /**
+     * @param \Illuminate\Http\Request|null $search
+     * @return $this
+     */
+    public function with($request = null);
 
     /**
      * @param mixed $value
