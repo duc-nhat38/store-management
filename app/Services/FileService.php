@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Media;
+use App\RepositoryInterfaces\MediaRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
 use MediaUploader;
 use Illuminate\Support\Str;
 
@@ -10,6 +12,15 @@ class FileService
 {
     /** @var int */
     const MAXIMUM_NAME_LENGTH = 255;
+
+    /**
+     * @param \App\RepositoryInterfaces\MediaRepositoryInterface $mediaRepository
+     */
+    public function __construct(
+        protected MediaRepositoryInterface $mediaRepository
+    ) {
+        //
+    }
 
     /**
      * @param \Illuminate\Http\UploadedFile|\Illuminate\Http\UploadedFile[] $file
@@ -26,6 +37,33 @@ class FileService
             }
         } else {
             $result = $this->saveAs($file, $directory);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int|array $mediaIds
+     * @return mixed
+     */
+    public function delete($mediaIds)
+    {
+        $mediaIds = (array) $mediaIds;
+        $media = $this->mediaRepository->getByIds($mediaIds);
+        $filesDelete = [];
+
+        foreach ($media as $item) {
+            $filesDelete[] = $item->getDiskPath();
+        }
+
+        $result = $this->mediaRepository->delete($mediaIds);
+
+        foreach ($filesDelete as $path) {
+            try {
+                Storage::delete($path);
+            } catch (\Exception $e) {
+                report($e);
+            }
         }
 
         return $result;

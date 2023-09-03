@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\RepositoryInterfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
@@ -177,6 +178,35 @@ abstract class BaseRepository implements BaseRepositoryInterface
         $this->newQuery();
 
         return $this->query->create($attributes);
+    }
+
+    /**
+     * @param mixed $attributes
+     * @param int $attributes
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function update($attributes, $id)
+    {
+        $this->newQuery();
+
+        $model = $this->find($id);
+
+        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+        throw_unless($model->update($attributes), \Exception::class, __('Update failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        return $model;
+    }
+
+    /**
+     * @param int|array $id
+     * @return int
+     */
+    public function delete($id)
+    {
+        $this->newQuery();
+        $id = (array) $id;
+
+        return $this->query->whereIn('id', $id)->delete();
     }
 
     /**

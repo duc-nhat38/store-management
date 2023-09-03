@@ -88,12 +88,11 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Database\Eloquent\Model|$this
+     * @return array
      */
-    public function create($request)
+    protected function getFormRequest(Request $request)
     {
-        $this->newQuery();
-        $attributes = $request->only([
+        return $request->only([
             'name',
             'code',
             'category_id',
@@ -105,6 +104,16 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             'status',
             'description',
         ]);
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function create($request)
+    {
+        $this->newQuery();
+        $attributes = $this->getFormRequest($request);
         $storePivots = [];
 
         if ($request->has('stores')) {
@@ -117,7 +126,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             $product = $this->query->create($attributes);
             throw_unless($product, \Exception::class, __('Create product failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
 
-            if (empty($storePivots)) {
+            if (!empty($storePivots)) {
                 $product->stores()->sync($storePivots);
             }
 
@@ -129,7 +138,62 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 $this->attachMedia($request->file('media'), MediaTag::MEDIA, $product);
             }
 
-            return $product;
+            return $product->load('category', 'trademark')->loadMedia();
+        });
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function update($request, $id)
+    {
+        $this->newQuery();
+        $attributes = $this->getFormRequest($request);
+        $storePivots = [];
+
+        if ($request->has('stores')) {
+            foreach ($request->get('stores') as $value) {
+                $storePivots[$value['id']] = ['status' => $value['status']];
+            }
+        }
+
+        return DB::transaction(function () use ($request, $id, $attributes, $storePivots) {
+            $product = $this->query->find($id);
+            throw_unless($product->update($attributes), \Exception::class, __('Update product failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            if (!empty($storePivots)) {
+                $product->stores()->sync($storePivots);
+            }
+
+            if ($request->hasFile('thumbnail')) {
+                $thumbnail = $product->firstMedia(MediaTag::THUMBNAIL);
+                $this->attachMedia($request->file('thumbnail'), MediaTag::THUMBNAIL, $product);
+
+                if ($thumbnail) {
+                    try {
+                        $this->fileService->delete($thumbnail->id);
+                    } catch (\Exception $e) {
+                        report($e);
+                    }
+                }
+            }
+
+            if ($request->hasFile('media')) {
+                $this->attachMedia($request->file('media'), MediaTag::MEDIA, $product, false);
+            }
+
+            if ($request->has('files_delete')) {
+                $product->media()->detach($request->get('files_delete'));
+                try {
+                    $this->fileService->delete($request->get('files_delete'));
+                } catch (\Exception $e) {
+                    report($e);
+                }
+            }
+
+            return $product->load('category', 'trademark')->loadMedia();
         });
     }
 

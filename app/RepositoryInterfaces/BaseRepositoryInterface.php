@@ -73,6 +73,19 @@ interface BaseRepositoryInterface
     public function create($attributes);
 
     /**
+     * @param mixed $attributes
+     * @param int $attributes
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function update($attributes, $id);
+
+    /**
+     * @param int|array $id
+     * @return int
+     */
+    public function delete($id);
+
+    /**
      * @param string $column
      * @param string|null $key
      * @return \Illuminate\Support\Collection
