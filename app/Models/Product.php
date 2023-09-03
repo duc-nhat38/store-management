@@ -12,7 +12,7 @@ class Product extends Model
     use HasFactory, SoftDeletes, Mediable;
 
     /** @var array */
-    protected $filable = [
+    protected $fillable = [
         'name',
         'code',
         'category_id',
