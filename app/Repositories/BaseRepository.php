@@ -73,7 +73,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
             $this->query = $this->query
                 ->when(isNotEmptyStringOrNull($search[$fieldName] ?? null), function ($q) use ($search, $column, $fieldName, $columnName) {
                     if (($column[1] ?? null) === 'like') {
-                        $q->where($columnName, 'like', ($column[2] ?? ''). escapeLike($search[$fieldName]) . ($column[3] ?? ''));
+                        $q->where($columnName, 'like', ($column[2] ?? '') . escapeLike($search[$fieldName]) . ($column[3] ?? ''));
                     } else {
                         $q->where($columnName, ($column[1] ?? '='), $search[$fieldName]);
                     }
@@ -118,5 +118,28 @@ abstract class BaseRepository implements BaseRepositoryInterface
         }
 
         return $this->query->get();
+    }
+
+    /**
+     * @param mixed $attributes
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function create($attributes)
+    {
+        $this->newQuery();
+
+        return $this->query->create($attributes);
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $key
+     * @return \Illuminate\Support\Collection
+     */
+    public function pluck(string $column, ?string $key = null)
+    {
+        $this->newQuery();
+
+        return $this->query->pluck($column, $key);
     }
 }

@@ -48,4 +48,17 @@ interface BaseRepositoryInterface
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
      */
     public function get(\Illuminate\Http\Request $request);
+
+    /**
+     * @param mixed $attributes
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function create($attributes);
+
+    /**
+     * @param string $column
+     * @param string|null $key
+     * @return \Illuminate\Support\Collection
+     */
+    public function pluck(string $column, ?string $key = null);
 }

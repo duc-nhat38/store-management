@@ -15,6 +15,8 @@ class RepositoryServiceProvider extends ServiceProvider
         [\App\RepositoryInterfaces\CategoryRepositoryInterface::class, \App\Repositories\CategoryRepository::class],
         [\App\RepositoryInterfaces\TrademarkRepositoryInterface::class, \App\Repositories\TrademarkRepository::class],
         [\App\RepositoryInterfaces\ProductRepositoryInterface::class, \App\Repositories\ProductRepository::class],
+        [\App\RepositoryInterfaces\StoreRepositoryInterface::class, \App\Repositories\StoreRepository::class],
+        [\App\RepositoryInterfaces\MediaRepositoryInterface::class, \App\Repositories\MediaRepository::class],
     ];
 
     /**

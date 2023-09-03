@@ -37,7 +37,7 @@ return [
     /*
      * The maximum file size in bytes for a single uploaded file
      */
-    'max_size' => 1024 * 1024 * 10,
+    'max_size' => 1024 * 1024 * 5,
 
     /*
      * What to do if a duplicate file is uploaded.
@@ -236,5 +236,5 @@ return [
     /**
      * Detach associated media when mediable model is soft deleted.
      */
-    'detach_on_soft_delete' => false,
+    'detach_on_soft_delete' => true,
 ];
