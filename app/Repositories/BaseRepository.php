@@ -144,7 +144,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function find($value, string $column = 'id')
     {
-        $this->newQuery();
+        $this->newQuery()->with();
 
         return $this->query->where($column, $value)->first();
     }
@@ -219,5 +219,19 @@ abstract class BaseRepository implements BaseRepositoryInterface
         $this->newQuery();
 
         return $this->query->pluck($column, $key);
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function findOrFail($value, string $column = 'id')
+    {
+        $model = $this->find($value, $column);
+
+        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+
+        return $model;
     }
 }

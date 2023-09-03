@@ -54,4 +54,15 @@ class ProductControllers extends Controller
 
         return JsonResponse::success(ProductResource::make($product)->resolve(), __('Update product successfully.'));
     }
+
+    /**
+     * @param int $id
+     * @return \App\Helpers\Facades\JsonResponse
+     */
+    public function show($id)
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        return JsonResponse::success(ProductResource::make($product)->resolve(), __('Product detail.'));
+    }
 }
