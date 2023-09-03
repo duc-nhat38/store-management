@@ -11,7 +11,7 @@ class Trademark extends Model
     use HasFactory, SoftDeletes;
 
     /** @var array */
-    protected $filable = [
+    protected $fillable = [
         'name',
         'nation'
     ];

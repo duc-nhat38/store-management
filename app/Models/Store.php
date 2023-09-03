@@ -12,7 +12,7 @@ class Store extends Model
     use HasFactory, SoftDeletes, Mediable;
 
     /** @var array */
-    protected $filable = [
+    protected $fillable = [
         'name',
         'manager_id',
         'email',
