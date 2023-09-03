@@ -31,7 +31,11 @@ class JsonResponse
         $payload = ['message' => $message];
 
         if (isNotEmptyStringOrNull($data)) {
-            $payload['data'] = $data;
+            if (array_key_exists('data', $data)) {
+                $payload = array_merge($payload, $data);
+            } else {
+                $payload['data'] = $data;
+            }
         }
 
         return $this->response($payload, Response::HTTP_OK);
