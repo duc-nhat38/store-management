@@ -12,6 +12,11 @@ Route::prefix('v1')->group(function () {
         });
     });
 
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'index'])->middleware('pagination_limit');
+    });
+
     Route::get('test', function () {
         return response()->json([
             'mode' => config('app.env'),
