@@ -55,6 +55,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
      */
     public function whereRelation(array $search)
     {
+        $this->query = $this->query->myOwner();
+
         foreach (['category_id' => 'category', 'trademark_id' => 'trademark'] as $column => $relation) {
             $value = $search[$column] ?? null;
 
@@ -93,7 +95,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
      */
     protected function getFormRequest(Request $request)
     {
-        return $request->only([
+        $attributes = $request->only([
             'name',
             'code',
             'category_id',
@@ -105,6 +107,9 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             'status',
             'description',
         ]);
+        $attributes['owner_id'] = auth()->id();
+
+        return $attributes;
     }
 
     /**
@@ -157,7 +162,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         }
 
         return DB::transaction(function () use ($request, $id, $attributes, $storePivots) {
-            $product = $this->query->find($id);
+            $product = $this->query->findOrFail($id);
             throw_unless($product->update($attributes), \Exception::class, __('Update product failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
 
             if (!empty($storePivots)) {
@@ -274,5 +279,20 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         }
 
         return $this->query->get();
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function findOrFail($value, string $column = 'id')
+    {
+        $this->newQuery();
+        $model = $this->query->where($column, $value)->myOwner()->first();
+
+        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+
+        return $model;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Product;
 
+use Illuminate\Validation\Rule;
+
 class UpdateProductRequest extends StoreProductRequest
 {
     /**
@@ -13,7 +15,14 @@ class UpdateProductRequest extends StoreProductRequest
     {
         $rules = parent::rules();
 
-        $rules['code'] = 'bail|required|string|unique:products,code,' . $this->product . ',id,deleted_at,NULL|min:10|max:100';
+        $rules['code'] = [
+            'bail',
+            'required',
+            'string',
+            Rule::unique('products', 'code')->ignore($this->product)->where('owner_id', $this->user()->id)->withoutTrashed(),
+            'min:10',
+            'max:100'
+        ];
         $rules['files_delete'] = 'bail|nullable|array';
 
         return $rules;

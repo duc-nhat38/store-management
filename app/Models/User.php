@@ -52,8 +52,18 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function store()
+    public function stores()
     {
         return $this->hasMany(Store::class, 'manager_id', 'id');
+    }
+
+    /**
+     * Get all of the product for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'owner_id', 'id');
     }
 }
