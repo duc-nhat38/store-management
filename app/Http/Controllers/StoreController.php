@@ -65,4 +65,15 @@ class StoreController extends Controller
 
         return JsonResponse::success(StoreResource::make($store)->resolve(), __('Store details.'));
     }
+
+    /**
+     * @param int $id
+     * @return \App\Helpers\Facades\JsonResponse
+     */
+    public function destroy($id)
+    {
+        $this->storeRepository->delete($id);
+
+        return JsonResponse::success(null, __('Deleted store successfully.'));
+    }
 }

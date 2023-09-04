@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Store extends Model
 {
@@ -52,5 +53,15 @@ class Store extends Model
         return $this->products()
             ->wherePivot('status', 1)
             ->where('products.status', 1);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeUnderMyManagement(Builder $query): void
+    {
+        $query->whereHas('manager', function ($e) {
+            $e->where('id', auth()->id());
+        });
     }
 }
