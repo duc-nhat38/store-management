@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Facades\JsonResponse;
+use App\Http\Requests\Store\CreateStoreRequest;
 use App\Http\Resources\Store\StoreCollection;
+use App\Http\Resources\Store\StoreResource;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -27,5 +29,16 @@ class StoreController extends Controller
         $stores = $this->storeRepository->getMyStore($request);
 
         return JsonResponse::success(StoreCollection::getResponse($stores), __('List of stores.'));
+    }
+
+    /**
+     * @param \App\Http\Requests\Store\CreateStoreRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(CreateStoreRequest $request)
+    {
+        $store = $this->storeRepository->create($request);
+
+        return JsonResponse::success(StoreResource::make($store)->resolve(), __('Create store successfully.'));
     }
 }
