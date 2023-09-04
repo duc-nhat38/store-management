@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\FolderName;
 use App\Enums\MediaTag;
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use App\RepositoryInterfaces\ProductRepositoryInterface;
 use App\Services\FileService;
@@ -117,9 +118,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $storePivots = [];
 
         if ($request->has('stores')) {
-            foreach ($request->get('stores') as $value) {
-                $storePivots[$value['id']] = ['status' => $value['status']];
-            }
+            $storePivots = $this->transformStorePivot($request->get('stores'));
         }
 
         return DB::transaction(function () use ($request, $attributes, $storePivots) {
@@ -154,9 +153,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $storePivots = [];
 
         if ($request->has('stores')) {
-            foreach ($request->get('stores') as $value) {
-                $storePivots[$value['id']] = ['status' => $value['status']];
-            }
+            $storePivots = $this->transformStorePivot($request->get('stores'));
         }
 
         return DB::transaction(function () use ($request, $id, $attributes, $storePivots) {
@@ -238,5 +235,20 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
             return $product->delete();
         });
+    }
+
+    /**
+     * @param array $stores
+     * @return array
+     */
+    protected function transformStorePivot(array $stores)
+    {
+        $storePivots = [];
+
+        foreach ($stores as $value) {
+            $storePivots[$value['id']] = ['status' => $value['status'] ?? ProductStatus::AVAILABLE];
+        }
+
+        return $storePivots;
     }
 }

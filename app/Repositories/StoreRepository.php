@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ProductStatus;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -98,9 +99,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         $productPivots = [];
 
         if ($request->has('products')) {
-            foreach ($request->get('products') as $value) {
-                $productPivots[$value['id']] = ['status' => $value['status']];
-            }
+            $productPivots = $this->transformProductPivot($request->get('products'));
         }
 
         return DB::transaction(function () use ($attributes, $productPivots) {
@@ -113,5 +112,47 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
 
             return $store;
         });
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function update($request, $id)
+    {
+        $this->newQuery();
+        $attributes = $this->getFormRequest($request);
+        $productPivots = [];
+
+        if ($request->has('products')) {
+            $productPivots = $this->transformProductPivot($request->get('products'));
+        }
+
+        return DB::transaction(function () use ($id, $attributes, $productPivots) {
+            $store = $this->query->findOrFail($id);
+            throw_unless($store->update($attributes), \Exception::class, __('Update store failed.'), Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            if (!empty($productPivots)) {
+                $store->products()->sync($productPivots);
+            }
+
+            return $store;
+        });
+    }
+
+    /**
+     * @param array $products
+     * @return array
+     */
+    protected function transformProductPivot(array $products)
+    {
+        $productPivots = [];
+
+        foreach ($products as $value) {
+            $productPivots[$value['id']] = ['status' => $value['status'] ?? ProductStatus::AVAILABLE];
+        }
+
+        return $productPivots;
     }
 }
