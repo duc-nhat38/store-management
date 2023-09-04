@@ -54,4 +54,15 @@ class StoreController extends Controller
 
         return JsonResponse::success(StoreResource::make($store)->resolve(), __('Update store successfully.'));
     }
+
+    /**
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($id)
+    {
+        $store = $this->storeRepository->findOrFail($id);
+
+        return JsonResponse::success(StoreResource::make($store)->resolve(), __('Store details.'));
+    }
 }
