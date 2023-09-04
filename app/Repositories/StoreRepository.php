@@ -55,9 +55,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
             ->with($request)
             ->querySort($search);
 
-        $this->query = $this->query->whereHas('manager', function ($e) {
-            $e->where('id', auth()->id());
-        });
+        $this->query = $this->query->underMyManagement();
 
         if ($request->limit) {
             return $this->query->paginate($request->limit);
@@ -154,5 +152,34 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         }
 
         return $productPivots;
+    }
+
+    /**
+     * @param int|array $id
+     * @return int
+     */
+    public function delete($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $store = $this->findOrFail($id);
+            $store->products()->detach();
+
+            return $store->delete();
+        });
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $column
+     * @return \Illuminate\Database\Eloquent\Model|mixed
+     */
+    public function findOrFail($value, string $column = 'id')
+    {
+        $this->newQuery();
+        $model = $this->query->where($column, $value)->underMyManagement()->first();
+
+        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+
+        return $model;
     }
 }
