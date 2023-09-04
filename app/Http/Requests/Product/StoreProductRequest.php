@@ -46,7 +46,7 @@ class StoreProductRequest extends ApiRequest
     public function rules(): array
     {
         $storeRepository = resolve(StoreRepositoryInterface::class);
-        $storeIds = $storeRepository->pluck('id')->toArray();
+        $storeIds = $storeRepository->getMyStore($this->duplicate()->replace([]))->pluck('id')->toArray();
 
         return [
             'name' => 'bail|required|string|max:255',
@@ -65,7 +65,7 @@ class StoreProductRequest extends ApiRequest
                 Rule::in(ProductStatus::getValues())
             ],
             'category_id' => 'bail|required|exists:categories,id',
-            'trademark_id' => 'bail|required|exists:trademarks,id',
+            'trademark_id' => 'bail|nullable|exists:trademarks,id',
             'quantity' => 'bail|nullable|integer|min:0|max:4294967295',
             'price' => 'bail|nullable|numeric|min:0|max:99999999999999,99',
             'currency' => 'bail|nullable|string|max:100',
