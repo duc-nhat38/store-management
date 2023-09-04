@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Facades\JsonResponse;
 use App\Http\Requests\Store\CreateStoreRequest;
+use App\Http\Requests\Store\UpdateStoreRequest;
 use App\Http\Resources\Store\StoreCollection;
 use App\Http\Resources\Store\StoreResource;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
@@ -40,5 +41,17 @@ class StoreController extends Controller
         $store = $this->storeRepository->create($request);
 
         return JsonResponse::success(StoreResource::make($store)->resolve(), __('Create store successfully.'));
+    }
+
+    /**
+     * @param \App\Http\Requests\Store\UpdateStoreRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateStoreRequest $request, $id)
+    {
+        $store = $this->storeRepository->update($request, $id);
+
+        return JsonResponse::success(StoreResource::make($store)->resolve(), __('Update store successfully.'));
     }
 }
