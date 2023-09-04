@@ -76,4 +76,16 @@ class ProductControllers extends Controller
 
         return JsonResponse::success(null, __('Deleted product successfully.'));
     }
+
+    /**
+     * @param Request $request
+     * @param int $storeId
+     * @return \App\Helpers\Facades\JsonResponse
+     */
+    public function getByStore(Request $request, $storeId)
+    {
+        $products = $this->productRepository->getByStore($storeId, $request);
+
+        return JsonResponse::success(ProductCollection::getResponse($products), __('List of store products.'));
+    }
 }

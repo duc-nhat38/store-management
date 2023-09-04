@@ -251,4 +251,28 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
         return $storePivots;
     }
+
+    /**
+     * @param integer $storeId
+     * @param \Illuminate\Http\Request|null $request
+     * @return @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
+     */
+    public function getByStore(int $storeId, ?Request $request = null)
+    {
+        $this->newQuery();
+
+        $this->query = $this->query->whereHas('stores', function ($q) use ($storeId) {
+            $q->where('stores.id', $storeId)
+                ->whereHas('manager', function ($e) {
+                    $e->where('id', auth()->id());
+                });
+        })
+            ->with('category', 'trademark', 'media');
+
+        if ($request && $request->limit) {
+            return $this->query->paginate($request->limit);
+        }
+
+        return $this->query->get();
+    }
 }
