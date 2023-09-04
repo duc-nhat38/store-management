@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Plank\Mediable\Mediable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
 {
@@ -13,6 +14,7 @@ class Product extends Model
 
     /** @var array */
     protected $fillable = [
+        'owner_id',
         'name',
         'code',
         'category_id',
@@ -55,5 +57,23 @@ class Product extends Model
         return $this->belongsToMany(Store::class, 'store_product', 'product_id', 'store_id')
             ->withTimestamps()
             ->withPivot(['status']);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeMyOwner(Builder $query): void
+    {
+        $query->whereHas('owner', function ($e) {
+            $e->where('users.id', auth()->id());
+        });
     }
 }

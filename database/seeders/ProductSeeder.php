@@ -15,10 +15,14 @@ class ProductSeeder extends Seeder
     {
         $categoryIds = \App\Models\Category::pluck('id')->toArray();
         $trademarkIds = \App\Models\Trademark::pluck('id')->toArray();
-        $storeIds = \App\Models\Store::pluck('id')->toArray();
+        $userIds = \App\Models\User::pluck('id')->toArray();
 
         for ($i = 1; $i <= 100; $i++) {
+            $owner = $userIds[array_rand($userIds)];
+            $storeIds = \App\Models\Store::where('manager_id', $owner)->pluck('id')->toArray();
+
             $product = \App\Models\Product::create([
+                'owner_id' => $owner,
                 'code' => "P" . \Illuminate\Support\Str::padLeft($i, 10, 0),
                 'name' => "Product {$i}",
                 'category_id' => $categoryIds[array_rand($categoryIds)],

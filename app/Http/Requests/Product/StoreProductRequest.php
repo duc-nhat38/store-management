@@ -50,7 +50,14 @@ class StoreProductRequest extends ApiRequest
 
         return [
             'name' => 'bail|required|string|max:255',
-            'code' => 'bail|required|string|unique:products,code,NULL,id,deleted_at,NULL|min:10|max:100',
+            'code' => [
+                'bail',
+                'required',
+                'string',
+                Rule::unique('products', 'code')->where('owner_id', $this->user()->id)->withoutTrashed(),
+                'min:10',
+                'max:100'
+            ],
             'stores' => 'bail|nullable|array',
             'stores.*.id' => [
                 'bail',
