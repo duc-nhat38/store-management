@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ProductStatus;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -98,9 +99,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         $productPivots = [];
 
         if ($request->has('products')) {
-            foreach ($request->get('products') as $value) {
-                $productPivots[$value['id']] = ['status' => $value['status']];
-            }
+            $productPivots = $this->transformProductPivot($request->get('products'));
         }
 
         return DB::transaction(function () use ($attributes, $productPivots) {
@@ -127,9 +126,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         $productPivots = [];
 
         if ($request->has('products')) {
-            foreach ($request->get('products') as $value) {
-                $productPivots[$value['id']] = ['status' => $value['status']];
-            }
+            $productPivots = $this->transformProductPivot($request->get('products'));
         }
 
         return DB::transaction(function () use ($id, $attributes, $productPivots) {
@@ -142,5 +139,20 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
 
             return $store;
         });
+    }
+
+    /**
+     * @param array $products
+     * @return array
+     */
+    protected function transformProductPivot(array $products)
+    {
+        $productPivots = [];
+
+        foreach ($products as $value) {
+            $productPivots[$value['id']] = ['status' => $value['status'] ?? ProductStatus::AVAILABLE];
+        }
+
+        return $productPivots;
     }
 }
