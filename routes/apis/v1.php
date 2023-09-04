@@ -19,6 +19,8 @@ Route::prefix('v1')->group(function () {
         Route::get('trademarks', [\App\Http\Controllers\TrademarkController::class, 'index'])->middleware('pagination_limit');
 
         Route::apiResource('products', \App\Http\Controllers\ProductControllers::class)->where(['product' => '[0-9]+']);
+
+        Route::apiResource('stores', \App\Http\Controllers\StoreController::class)->where(['store' => '[0-9]+']);
     });
 
     Route::get('test', function () {
