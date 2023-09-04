@@ -21,6 +21,10 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('products', \App\Http\Controllers\ProductControllers::class)->where(['product' => '[0-9]+']);
 
         Route::apiResource('stores', \App\Http\Controllers\StoreController::class)->where(['store' => '[0-9]+']);
+
+        Route::prefix('stores')->group(function () {
+            Route::get('/{store}/products', [\App\Http\Controllers\ProductControllers::class, 'getByStore'])->middleware('pagination_limit');
+        })->where(['store' => '[0-9]+']);
     });
 
     Route::get('test', function () {
