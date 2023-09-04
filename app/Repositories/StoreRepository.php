@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\ProductStatus;
 use App\RepositoryInterfaces\StoreRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -178,7 +179,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         $this->newQuery();
         $model = $this->query->where($column, $value)->underMyManagement()->first();
 
-        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+        throw_unless($model, ModelNotFoundException::class, __('Not found.'), Response::HTTP_NOT_FOUND);
 
         return $model;
     }

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\RepositoryInterfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -229,7 +230,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         $model = $this->find($value, $column);
 
-        throw_unless($model, \Exception::class, __('Not found.'), Response::HTTP_NOT_FOUND);
+        throw_unless($model, ModelNotFoundException::class, __('Not found.'), Response::HTTP_NOT_FOUND);
 
         return $model;
     }
